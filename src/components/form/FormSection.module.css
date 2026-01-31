@@ -1,18 +1,52 @@
 .section {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 100px 1fr;
     column-gap: 1.5rem;
     align-items: start;
-    margin-bottom: 2rem;
+
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    position: relative;
+}
+
+/* Divider */
+.section::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .title {
     font-size: var(--font-lg);
     line-height: var(--lh-tight);
     margin: 0;
+
 }
 
+/* ✅ Make the content area 2 columns */
 .content {
     display: grid;
     gap: 0.75rem;
+    row-gap: 0.4rem;
+
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Prevent overflow in grid children */
+    min-width: 0;
+}
+
+/* ✅ Mobile: stack title/content and make form 1 column */
+@media (max-width: 768px) {
+    .section {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        grid-template-columns: 1fr;
+    }
 }

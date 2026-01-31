@@ -1,20 +1,29 @@
 .field {
-    margin-bottom: 1rem;
+    margin-bottom: 0;
+    /* let FormSection grid control spacing */
 }
 
 .label {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 0px;
 }
 
 .input {
+    box-sizing: border-box;
     width: 100%;
-    padding: 8px;
+    padding: .1rem;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 0px;
+    height: 1.5rem;
+    padding: 0 0.5rem;
+    line-height: var(--lh-tight);
 }
 
 .input:focus {
     outline: 2px solid #666;
     outline-offset: 2px;
+}
+
+.fullWidth {
+    grid-column: 1 / -1;
 }

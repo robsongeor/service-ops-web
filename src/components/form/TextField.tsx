@@ -7,6 +7,9 @@ type TextFieldProps<T extends string> = {
     onChange: (name: T, value: string) => void;
     placeholder?: string;
     type?: React.HTMLInputTypeAttribute;
+    fullWidth?: boolean;
+    required?: boolean;
+
 };
 
 export function TextField<T extends string>({
@@ -16,9 +19,14 @@ export function TextField<T extends string>({
     onChange,
     placeholder,
     type = "text",
+    fullWidth = false,
+    required = false,
+
 }: TextFieldProps<T>) {
     return (
-        <div className={styles.field}>
+        <div
+            className={`${styles.field} ${fullWidth ? styles.fullWidth : ""}`}
+        >
             <label className={styles.label}>{label}</label>
 
             <input
@@ -27,6 +35,7 @@ export function TextField<T extends string>({
                 value={value}
                 placeholder={placeholder}
                 onChange={(e) => onChange(name, e.target.value)}
+                required={required}
             />
         </div>
     );

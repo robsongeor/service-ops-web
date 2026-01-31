@@ -1,0 +1,46 @@
+.button {
+    font-family: inherit;
+    font-size: var(--font-md);
+    line-height: var(--lh-normal);
+
+    height: 32px;
+    padding: 0 0.75rem;
+
+    border-radius: 6px;
+    border: 1px solid transparent;
+
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Primary action */
+.primary {
+    background-color: #2563eb;
+    /* blue-600-ish */
+    color: white;
+}
+
+.primary:hover:not(:disabled) {
+    background-color: #1d4ed8;
+}
+
+/* Secondary / neutral */
+.secondary {
+    background-color: #f5f5f5;
+    color: #111;
+    border-color: #ccc;
+}
+
+.secondary:hover:not(:disabled) {
+    background-color: #eee;
+}
+
+/* Disabled */
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
