@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+:root {
+    /* Font sizes */
+    --font-xs: 0.5rem;
+    /* 8px */
+    --font-sm: 0.625rem;
+    /* 10px */
+    --font-md: 0.75rem;
+    /* 12px */
+    --font-lg: 0.875rem;
+    /* 14px */
+    --font-xl: 1.125rem;
+    /* 18px */
+    --font-xxl: 1.5rem;
+    /* 24px */
+
+    /* Line heights */
+    --lh-tight: 1.2;
+    --lh-normal: 1.35;
+    --lh-relaxed: 1.4;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: "Roboto Mono", monospace;
+    font-size: var(--font-sm);
+    line-height: var(--lh-relaxed);
+}

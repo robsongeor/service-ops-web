@@ -1,0 +1,20 @@
+.field {
+    margin-bottom: 1rem;
+}
+
+.label {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.input:focus {
+    outline: 2px solid #666;
+    outline-offset: 2px;
+}
