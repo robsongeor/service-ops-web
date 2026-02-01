@@ -77,6 +77,8 @@ export async function createContact(
 ): Promise<CreateContactResponse> {
     assertEnv("VITE_FLOW_CREATE_CONTACT_URL", FLOW_CREATE_CONTACT_URL);
 
+    console.log("create Contact payload: " + JSON.stringify(payload))
+
     const res = await fetch(FLOW_CREATE_CONTACT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -4,10 +4,15 @@ export type CreateMachinePayload = {
     machine: {
         fleetNumber: string;
         model?: string;
+
         customer?: string;
         siteAddress?: string;
         siteAddressSuburb?: string;
         siteAddressCity?: string;
+
+        tyrecoverinra?: boolean;
+        tyreFront?: string;
+        tyreRear?: string;
     }
 
 };

@@ -9,6 +9,9 @@ export type MachineRow = {
     gr_siteaddress?: string;
     gr_siteaddresssuburb?: string;
     gr_siteaddresscity?: string;
+    gr_fronttyres?: string;
+    gr_reartyres?: string;
+    gr_tyrecoverinra?: boolean;
 };
 
 export type SiteContactRow = {
