@@ -12,14 +12,15 @@ export type MachineRow = {
 };
 
 export type SiteContactRow = {
-    // update these once you add columns to SiteContacts
-    // example:
-    // gr_sitecontactsid: string;
-    // gr_contactname?: string;
-    // gr_contactphone?: string;
-    // gr_contactemail?: string;
-    [key: string]: any;
+    gr_sitecontactsid: string;
+    gr_contactactualname?: string;
+    gr_contactname?: string;
+    gr_contactphone?: string;
+    gr_contactemail?: string;
+    createdon?: string;
 };
+
+
 
 export type MachineLookupResponse = {
     machine: MachineRow | null;

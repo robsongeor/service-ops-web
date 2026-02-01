@@ -1,3 +1,5 @@
+import type { SiteContactRow } from "./dataverse";
+
 export type CreateMachinePayload = {
     machine: {
         fleetNumber: string;
@@ -10,12 +12,6 @@ export type CreateMachinePayload = {
 
 };
 
-export type CreateContactPayload = {
-    name: string;
-    phone?: string;
-    email?: string;
-    machineId: string;
-};
 
 export type CreateJobPayload = {
     job: {
@@ -57,4 +53,22 @@ export type CreateMachineResponse = {
     machineId: string;
     created?: boolean;
     updated?: boolean;
+};
+
+
+export type CreateContactPayload = {
+    contact: {
+        name?: string;
+        phone?: string;
+        email?: string;
+        machineId: string; // required for option B
+    };
+};
+
+export type CreateContactResponse = {
+    contactId: string;
+};
+
+export type ContactsByMachineResponse = {
+    contacts: SiteContactRow[];
 };

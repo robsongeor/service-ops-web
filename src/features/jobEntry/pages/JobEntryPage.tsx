@@ -2,8 +2,9 @@ import React from "react";
 import { TextField } from "../../../components/form/TextField";
 import { FormSection } from "../../../components/form/FormSection";
 import { Button } from "../../../components/ui/Button/Button";
-import { createMachine, getMachineByFleetNumber } from "../../../lib/api";
+import { createContact, createMachine, getMachineByFleetNumber } from "../../../lib/api";
 import { createJob } from "../../../lib/api";
+import type { SiteContactRow } from "../../../types/dataverse";
 
 export type JobEntryForm = {
     jobNumber: string;
@@ -73,6 +74,101 @@ export function JobEntryPage() {
     const [submitting, setSubmitting] = React.useState(false);
     const [submitError, setSubmitError] = React.useState<string | null>(null);
 
+    const [contacts, setContacts] = React.useState<SiteContactRow[]>([]);
+    const [loadingContacts, setLoadingContacts] = React.useState(false);
+    const [selectedContactId, setSelectedContactId] = React.useState<string | null>(null);
+
+    function escapeForTSV(value: unknown) {
+        // Keep it simple: replace tabs/newlines so paste doesn't break columns/rows
+        return String(value ?? "")
+            .replace(/\t/g, " ")
+            .replace(/\r?\n/g, " ");
+    }
+
+    async function copyToExcel() {
+        // Choose the column order you want in Excel:
+
+
+        const columns = [
+
+            form.date,
+            form.technician,
+            form.model,
+            form.fleetNumber,
+            form.customer,
+            form.description,
+
+            form.siteAddress,
+            form.siteAddressSuburb,
+            form.siteAddressCity,
+            form.customerPO,
+
+
+
+
+
+
+        ].map(escapeForTSV);
+
+        const tsvRow = columns.join("\t");
+
+        try {
+            await navigator.clipboard.writeText(tsvRow);
+            // optional: toast / alert
+            console.log("Copied row to clipboard for Excel");
+        } catch {
+            // Fallback for some browsers/security contexts
+            const ta = document.createElement("textarea");
+            ta.value = tsvRow;
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            console.log("Copied row (fallback) to clipboard for Excel");
+        }
+    }
+
+
+
+
+    async function ensureContactId(mid: string): Promise<string | null> {
+        if (selectedContactId) return selectedContactId;
+
+        const name = form.siteContact.trim();
+        const phone = form.siteContactPhone.trim();
+        const email = form.siteContactEmail.trim();
+
+        const hasAny = !!name || !!phone || !!email;
+        if (!hasAny) return null;
+
+        const created = await createContact({
+            contact: {
+                name: name || undefined,
+                phone: phone || undefined,
+                email: email || undefined,
+                machineId: mid, // lookup link
+            },
+        });
+
+        setContacts(prev => [
+            {
+                gr_sitecontactsid: created.contactId,
+                gr_contactactualname: name || undefined,
+                gr_contactname: name || undefined,
+                gr_contactphone: phone || undefined,
+                gr_contactemail: email || undefined,
+                createdon: new Date().toISOString(),
+            },
+            ...prev,
+        ]);
+
+        setSelectedContactId(created.contactId);
+
+        return created.contactId;
+    }
+
 
     async function handleFleetLookup() {
         setLoadingMachine(true);
@@ -87,6 +183,34 @@ export function JobEntryPage() {
 
             setMachineNotFound(false);
             setMachineId(data.machine.gr_machinesid);
+
+
+            setContacts(data.contacts ?? []);
+
+            const list = data.contacts ?? [];
+            if (list.length > 0) {
+                const newest = list[0];
+                setSelectedContactId(newest.gr_sitecontactsid);
+
+                setForm(prev => ({
+                    ...prev,
+                    siteContact: newest.gr_contactactualname ?? newest.gr_contactname ?? "",
+                    siteContactPhone: newest.gr_contactphone ?? "",
+                    siteContactEmail: newest.gr_contactemail ?? "",
+                }));
+            } else {
+                setSelectedContactId(null);
+                setForm(prev => ({
+                    ...prev,
+                    siteContact: "",
+                    siteContactPhone: "",
+                    siteContactEmail: "",
+                }));
+            }
+
+
+
+
 
             setForm((prev) => ({
                 ...prev,
@@ -143,6 +267,8 @@ export function JobEntryPage() {
             setMachineId(ensuredMachineId);
             setMachineNotFound(false);
 
+            const contactId = await ensureContactId(ensuredMachineId);
+
             const payload = {
                 job: {
                     jobNumber: form.jobNumber || undefined,
@@ -154,7 +280,7 @@ export function JobEntryPage() {
 
                     // ✅ USE ensuredMachineId (not machineId state)
                     machineId: ensuredMachineId,
-                    contactId: null, // later
+                    contactId, // later
 
                     fleetNumber: form.fleetNumber,
                     model: form.model || undefined,
@@ -187,14 +313,12 @@ export function JobEntryPage() {
             setMachineId(null);
             setMachineNotFound(false);
         } catch (err: any) {
+            console.log("failed")
             setSubmitError(err?.message ?? "Failed to create job.");
         } finally {
             setSubmitting(false);
         }
     };
-
-
-
 
     return (
         <div>
@@ -315,36 +439,100 @@ export function JobEntryPage() {
 
                 </FormSection>
 
-
-
                 <FormSection title="Site contact">
-                    <TextField<keyof JobEntryForm>
-                        label="Name"
-                        name="siteContact"
-                        value={form.siteContact}
-                        onChange={handleChange}
-                        required={false}
-                    />
+                    {loadingContacts ? (
+                        <p>Loading contacts...</p>
+                    ) : (
+                        <>
+                            {machineId && (
+                                <div style={{ display: "flex", gap: 8, alignItems: "end" }}>
+                                    <div style={{ flex: 1 }}>
+                                        <label style={{ display: "block", marginBottom: 6 }}>Existing contacts</label>
+                                        <select
+                                            value={selectedContactId ?? ""}
+                                            onChange={(e) => {
+                                                const id = e.target.value || null;
+                                                setSelectedContactId(id);
 
-                    <TextField<keyof JobEntryForm>
-                        label="Phone"
-                        name="siteContactPhone"
-                        value={form.siteContactPhone}
-                        onChange={handleChange}
-                        type="tel"
-                        required={false}
-                    />
+                                                if (!id) {
+                                                    // ✅ manual/new contact
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        siteContact: "",
+                                                        siteContactPhone: "",
+                                                        siteContactEmail: "",
+                                                    }));
+                                                    return;
+                                                }
 
-                    <TextField<keyof JobEntryForm>
-                        label="Email"
-                        name="siteContactEmail"
-                        value={form.siteContactEmail}
-                        onChange={handleChange}
-                        type="email"
-                        fullWidth
-                        required={false}
-                    />
+                                                const c = contacts.find(x => x.gr_sitecontactsid === id);
+
+                                                console.log(c)
+                                                if (c) {
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        siteContact: c.gr_contactactualname ?? c.gr_contactname ?? "",
+                                                        siteContactPhone: c.gr_contactphone ?? "",
+                                                        siteContactEmail: c.gr_contactemail ?? "",
+                                                    }));
+                                                }
+
+                                            }}
+
+
+                                            style={{ width: "100%", padding: 8 }}
+                                        >
+                                            <option value="">— New contact / Manual entry —</option>
+                                            {contacts.map(c => (
+                                                <option key={c.gr_sitecontactsid} value={c.gr_sitecontactsid}>
+                                                    {(c.gr_contactactualname ?? c.gr_contactname ?? "Unnamed")}
+                                                    {c.gr_contactphone ? ` (${c.gr_contactphone})` : ""}
+                                                </option>
+                                            ))}
+
+                                        </select>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Manual entry fields (always available) */}
+                            <TextField<keyof JobEntryForm>
+                                label="Name"
+                                name="siteContact"
+                                value={form.siteContact}
+                                onChange={(name, value) => {
+                                    // if they type, treat as “new/manual”
+                                    setSelectedContactId(null);
+                                    handleChange(name, value);
+                                }}
+                            />
+
+                            <TextField<keyof JobEntryForm>
+                                label="Phone"
+                                name="siteContactPhone"
+                                value={form.siteContactPhone}
+                                onChange={(name, value) => {
+                                    setSelectedContactId(null);
+                                    handleChange(name, value);
+                                }}
+                                type="tel"
+                            />
+
+                            <TextField<keyof JobEntryForm>
+                                label="Email"
+                                name="siteContactEmail"
+                                value={form.siteContactEmail}
+                                onChange={(name, value) => {
+                                    setSelectedContactId(null);
+                                    handleChange(name, value);
+                                }}
+                                type="email"
+                                fullWidth
+                            />
+                        </>
+                    )}
                 </FormSection>
+
 
 
                 {/* ---- Conditional sections ---- */}
@@ -395,11 +583,16 @@ export function JobEntryPage() {
                     marginTop: "1.25rem",
                     gap: "0.5rem",
                 }}>
+                    <Button type="button" onClick={copyToExcel} variant="secondary">
+                        Copy to Excel
+                    </Button>
+
                     <Button type="submit" variant="primary">
                         {submitting ? "Creating..." : "Create Job"}
                     </Button>
-
                 </div>
+
+
 
 
             </form>
