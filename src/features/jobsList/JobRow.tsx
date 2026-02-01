@@ -2,18 +2,18 @@
 import React from "react";
 import type { JobListItem } from "../../types/dataverse";
 import { EditableCell } from "./EditableCell";
-import { formatNZDate } from "../../lib/utils/date";
-
 import { ActionButton } from "../../components/table/ActionButton/ActionButton";
 import { Check, FileSpreadsheet, Mail, Pencil, X } from "lucide-react";
 import { Td } from "./Td";
-
+import type { JobColumn } from "./columns";
+import { SelectCell } from "./SelectCell";
 
 export type ActiveCell = { rowId: string; key: keyof JobListItem } | null;
 
 export function JobRow({
     job,
     rowBg,
+    columns,
 
     // editing state
     editingId,
@@ -32,6 +32,7 @@ export function JobRow({
 }: {
     job: JobListItem;
     rowBg: string;
+    columns: JobColumn[];
 
     editingId: string | null;
     setEditingId: (id: string | null) => void;
@@ -57,139 +58,56 @@ export function JobRow({
                 outlineOffset: "-2px",
             }}
         >
-            <EditableCell
-                rowId={job.id}
-                cellKey="jobNumber"
-                mono
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.jobNumber}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), jobNumber: v }))}
-            />
+            {columns.map((col) => {
+                const raw = row[col.key];
+                const value = col.getValue ? col.getValue(row) : (raw == null ? "" : String(raw));
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="date"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={formatNZDate(row.date)}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), date: v }))}
-            />
+                const common = {
+                    key: `${job.id}-${String(col.key)}`,
+                    rowId: job.id,
+                    cellKey: col.key,
+                    isEditingRow,
+                    activeCell,
+                    setActiveCell,
+                    minWidth: col.minWidth,
+                };
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="mechanic"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.mechanic}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), mechanic: v }))}
-            />
+                if (col.kind === "select" && col.options) {
+                    const current = raw == null ? "" : String(raw);
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="model"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.model}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), model: v }))}
-            />
+                    return (
+                        <SelectCell
+                            key={`${job.id}-${String(col.key)}`}
+                            value={current}
+                            options={col.options}
+                            minWidth={col.minWidth}
+                            disabled={false} // or some rule
+                            onChange={(v) => {
+                                const fullRow = { ...job, status: v };
+                                onSaveDraft?.(job.id, fullRow);
+                            }}
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="fleetNumber"
-                mono
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.fleetNumber}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), fleetNumber: v }))}
-            />
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="companyName"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.companyName}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), companyName: v }))}
-            />
+                        />
+                    );
+                }
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="description"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.description}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), description: v }))}
-            />
+                return (
+                    <EditableCell
+                        {...common}
+                        mono={col.mono}
+                        value={value}
+                        onChange={(v) =>
+                            setDraft((d) => {
+                                const base = (d ?? job) as JobListItem;
+                                const nextValue = col.parse ? col.parse(v, base) : v;
+                                return { ...base, [col.key]: nextValue } as Partial<JobListItem>;
+                            })
+                        }
+                    />
+                );
+            })}
 
-            <EditableCell
-                rowId={job.id}
-                cellKey="siteAddress"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.siteAddress}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), siteAddress: v }))}
-            />
-
-            <EditableCell
-                rowId={job.id}
-                cellKey="siteSuburb"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.siteSuburb}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), siteSuburb: v }))}
-            />
-
-            <EditableCell
-                rowId={job.id}
-                cellKey="siteCity"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.siteCity}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), siteCity: v }))}
-            />
-
-            <EditableCell
-                rowId={job.id}
-                cellKey="customerPo"
-                mono
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.customerPo}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), customerPo: v }))}
-            />
-
-            <EditableCell
-                rowId={job.id}
-                cellKey="contactName"
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.contactName}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), contactName: v }))}
-            />
-
-            <EditableCell
-                rowId={job.id}
-                cellKey="contactPhone"
-                mono
-                isEditingRow={isEditingRow}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                value={row.contactPhone}
-                onChange={(v) => setDraft((d) => ({ ...(d ?? job), contactPhone: v }))}
-            />
 
             <Td>
                 <div style={{ display: "flex", gap: 6 }}>

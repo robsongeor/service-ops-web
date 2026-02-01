@@ -3,6 +3,8 @@ import { Sidebar } from "../Sidebar/Sidebar";
 
 const titleMap: Record<string, string> = {
     "/job-entry": "Job Entry",
+    "/ops-board": "Ops Board",
+    "/job-list": "Job List",
 };
 
 export function AppShell() {

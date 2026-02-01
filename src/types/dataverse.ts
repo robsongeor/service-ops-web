@@ -36,6 +36,8 @@ export type RawJob = Record<string, any>;
 export type JobListItem = {
     id: string;
 
+    status?: string
+
     jobNumber: string;
     date: string;
     mechanic: string;
@@ -54,3 +56,21 @@ export type JobListItem = {
     contactName: string;
     contactPhone: string;
 };
+
+// app/lib/api/updateJob.ts (or wherever you keep API helpers)
+
+export type UpdateJobPayload = {
+    id: string;
+    jobNumber?: string;
+    date?: string;        // ISO string recommended
+    technician?: string;
+    model?: string;
+    fleetNumber?: string;
+    customer?: string;
+    description?: string;
+    siteAddress?: string;
+    siteSuburb?: string;
+    siteCity?: string;
+    customerPo?: string;
+};
+

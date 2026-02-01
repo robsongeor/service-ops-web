@@ -28,5 +28,7 @@ export function mapRawJob(j: RawJob): JobListItem {
         customerPo: j.gr_customerpo ?? "",
         contactName: j.gr_contactnamesnap ?? "",
         contactPhone: j.gr_contactphonesnap ?? "",
+
+        status: j.gr_status ?? ""
     };
 }

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "../layout/AppShell/AppShell";
 import { JobEntryPage } from "../features/jobEntry/pages/JobEntryPage";
 import JobListPage from "../features/jobsList/pages/JobListPage";
+import JobListOpsBoard from "../features/jobsList/pages/JobsListOpsBoard/JobListOpsBoard";
 
 // Placeholder pages (you’ll replace these later)
 const Page = ({ title }: { title: string }) => (
@@ -24,6 +25,12 @@ export function AppRoutes() {
                     path="/job-list"
                     element={<JobListPage />}
                     handle={{ title: "Job List" }}
+                />
+
+                <Route
+                    path="/ops-board"
+                    element={<JobListOpsBoard />}
+                    handle={{ title: "Ops Board" }}
                 />
 
 

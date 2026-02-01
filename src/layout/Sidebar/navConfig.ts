@@ -6,4 +6,5 @@ export type NavItem = {
 export const navItems: NavItem[] = [
     { label: "Job Entry", to: "/job-entry" },
     { label: "Job List", to: "/job-list" },
+    { label: "Ops Board", to: "/ops-board" },
 ];

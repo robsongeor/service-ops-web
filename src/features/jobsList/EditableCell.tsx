@@ -1,9 +1,10 @@
 import type { JobListItem } from "../../types/dataverse";
+import type { ActiveCell } from "./JobRow";
 import { Td } from "./Td";
 
 
 
-export type ActiveCell = { rowId: string; key: keyof JobListItem } | null;
+
 
 export function EditableCell({
     rowId,

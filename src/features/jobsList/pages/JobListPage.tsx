@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import type { JobListItem, RawJob } from "../../../types/dataverse";
 import { mapRawJob } from "../mapJob";
-import { formatNZDate } from "../../../lib/utils/date";
+import { formatNZDate, nzDateToISO, toDataverseDateTime } from "../../../lib/utils/date";
 
 import { copyRowToClipboard } from "../../../lib/excel";
 
 import { JobRow } from "../JobRow";
+import { updateJob } from "../../../lib/api";
+import { jobColumnsFull } from "../columns";
 
 const API_URL = import.meta.env.VITE_JOBS_API_URL;
 
@@ -13,16 +15,10 @@ export default function JobListPage() {
     const [raw, setRaw] = useState<RawJob[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
-
     const [editingId, setEditingId] = useState<string | null>(null);
-
     const [draft, setDraft] = useState<Partial<JobListItem> | null>(null);
-
     type ActiveCell = { rowId: string; key: keyof JobListItem } | null;
     const [activeCell, setActiveCell] = useState<ActiveCell>(null);
-
-
-
     const jobs: JobListItem[] = useMemo(() => raw.map(mapRawJob), [raw]);
 
     async function copyToExcel(job: JobListItem) {
@@ -37,11 +33,8 @@ export default function JobListPage() {
             job.siteSuburb,
             job.siteCity,
             job.customerPo,
-            job.contactName,
-            job.contactPhone,
         ]);
     }
-
 
     async function loadJobs() {
         setLoading(true);
@@ -119,6 +112,7 @@ export default function JobListPage() {
 
                                 return (
                                     <JobRow
+                                        columns={jobColumnsFull}
                                         key={j.id}
                                         job={j}
                                         rowBg={rowBg}
@@ -129,10 +123,47 @@ export default function JobListPage() {
                                         activeCell={activeCell}
                                         setActiveCell={setActiveCell}
                                         onCopyToExcel={copyToExcel}
-                                        onSaveDraft={(id, d) => {
-                                            console.log("SAVE:", id, d);
+                                        onSaveDraft={async (id, d) => {
+                                            if (!d) return;
+
+                                            try {
+                                                const payload = {
+                                                    // map your draft fields to the flattened Flow fields
+                                                    jobNumber: String(d.jobNumber ?? ""),
+                                                    date: toDataverseDateTime(d.date), // ✅ always ISO now
+
+                                                    technician: String((d as any).mechanic ?? ""), // or d.technician if your draft uses that
+                                                    model: String(d.model ?? ""),
+                                                    fleetNumber: String(d.fleetNumber ?? ""),
+                                                    customer: String(d.companyName ?? ""),
+                                                    description: String(d.description ?? ""),
+                                                    siteAddress: String(d.siteAddress ?? ""),
+                                                    siteSuburb: String(d.siteSuburb ?? ""),
+                                                    siteCity: String(d.siteCity ?? ""),
+                                                    customerPo: String(d.customerPo ?? ""),
+                                                };
+
+                                                await updateJob({ id, ...payload });
+
+
+
+                                                // ✅ Optimistic UI update
+                                                setRaw((prev) =>
+                                                    prev.map((r) => (r.id === id ? ({ ...r, ...d } as RawJob) : r))
+                                                );
+
+                                                // ✅ refresh table data
+                                                await loadJobs();
+
+                                            } catch (err) {
+                                                console.log(err)
+                                                console.error(err);
+                                                //alert("Failed to save job");
+                                            }
                                         }}
+
                                     />
+
                                 );
                             })}
                         </tbody>
