@@ -30,4 +30,27 @@ export type MachineLookupResponse = {
     contacts: SiteContactRow[];
 };
 
+// src/types.ts
+export type RawJob = Record<string, any>;
 
+export type JobListItem = {
+    id: string;
+
+    jobNumber: string;
+    date: string;
+    mechanic: string;
+
+    model: string;
+    fleetNumber: string;
+    companyName: string;
+
+    description: string;
+
+    siteAddress: string;
+    siteSuburb: string;
+    siteCity: string;
+
+    customerPo: string;
+    contactName: string;
+    contactPhone: string;
+};

@@ -4,7 +4,8 @@ import { FormSection } from "../../../components/form/FormSection";
 import { Button } from "../../../components/ui/Button/Button";
 import { createMachine, createJob } from "../../../lib/api";
 import { copyRowToClipboard } from "../../../lib/excel";
-import { useMachineLookupAndContacts } from "../../../hooks/useMachineContacts";
+import { useMachineLookupAndContacts } from "./hooks/useMachineContacts";
+import { todayISO } from "../../../lib/utils/date";
 
 
 export type JobEntryForm = {
@@ -32,9 +33,7 @@ export type JobEntryForm = {
     scheduledDateEnd?: string;
 };
 
-function todayISO() {
-    return new Date().toISOString().split("T")[0];
-}
+
 
 export const initialForm: JobEntryForm = {
     jobNumber: "",

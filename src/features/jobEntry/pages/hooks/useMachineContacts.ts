@@ -1,7 +1,7 @@
 import React from "react";
-import type { JobEntryForm } from "../features/jobEntry/pages/JobEntryPage";
-import type { MachineRow, SiteContactRow } from "../types/dataverse";
-import { createContact, getMachineByFleetNumber } from "../lib/api";
+import type { JobEntryForm } from "../JobEntryPage";
+import type { MachineRow, SiteContactRow } from "../../../../types/dataverse";
+import { createContact, getMachineByFleetNumber } from "../../../../lib/api";
 
 
 type Args = {

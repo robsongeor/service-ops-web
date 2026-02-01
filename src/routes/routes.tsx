@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "../layout/AppShell/AppShell";
 import { JobEntryPage } from "../features/jobEntry/pages/JobEntryPage";
+import JobListPage from "../features/jobsList/pages/JobListPage";
 
 // Placeholder pages (you’ll replace these later)
 const Page = ({ title }: { title: string }) => (
@@ -18,6 +19,13 @@ export function AppRoutes() {
                     element={<JobEntryPage />}
                     handle={{ title: "Job Entry" }}
                 />
+
+                <Route
+                    path="/job-list"
+                    element={<JobListPage />}
+                    handle={{ title: "Job List" }}
+                />
+
 
 
                 <Route path="*" element={<Page title="Not found" />} />
