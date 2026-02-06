@@ -22,6 +22,35 @@ export function nzDateToISO(value?: string) {
     return `${yyyy}-${mm}-${dd}T00:00:00Z`;
 }
 
+export function toISODateOnly(input: string): string {
+    const s = (input ?? "").trim();
+    if (!s) return "";
+
+    // already yyyy-mm-dd
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+
+    // dd/mm/yyyy
+    const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) {
+        const dd = String(m[1]).padStart(2, "0");
+        const mm = String(m[2]).padStart(2, "0");
+        const yyyy = m[3];
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // fallback: let Date try (best-effort)
+    const d = new Date(s);
+    if (!Number.isNaN(d.getTime())) {
+        // date input wants date-only
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    return "";
+}
+
 // lib/utils/date.ts
 export function toDataverseDateTime(input: unknown): string {
     // Empty → now

@@ -31,6 +31,8 @@ type Props = {
     onCopyToExcel: (job: JobListItem) => void | Promise<void>;
     onEmailToTech?: (job: JobListItem) => void | Promise<void>;
     onSaveDraft?: (jobId: string, draft: Partial<JobListItem>) => void | Promise<void>;
+
+    editable?: boolean;
 };
 
 export function JobTable({
@@ -49,13 +51,13 @@ export function JobTable({
     onCopyToExcel,
     onEmailToTech,
     onSaveDraft,
+    editable,
 }: Props) {
     return (
         <div style={{ paddingBottom: 12 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <h2 style={{ margin: 0 }}>
                     {title} ({loading ? "…" : jobs.length})
-
                 </h2>
 
                 <button onClick={onRefresh} disabled={loading}>
@@ -115,6 +117,7 @@ export function JobTable({
                                         onCopyToExcel={onCopyToExcel}
                                         onEmailToTech={onEmailToTech}
                                         onSaveDraft={onSaveDraft}
+                                        editable={editable}
                                     />
                                 );
                             })}

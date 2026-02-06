@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { AppShell } from "../layout/AppShell/AppShell";
 import { JobEntryPage } from "../features/jobEntry/pages/JobEntryPage";
 import JobListPage from "../features/jobsList/pages/JobListPage";

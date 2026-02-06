@@ -1,0 +1,22 @@
+/* JobEntryPage.module.css */
+
+.layout {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+/* Left: job entry form */
+.formPane {
+    flex: 0 0 520px;
+    /* fixed-ish width, good for forms */
+    max-width: 600px;
+}
+
+/* Right: job list */
+.listPane {
+    flex: 1;
+    /* takes remaining space */
+    min-width: 0;
+    /* IMPORTANT for tables/overflow */
+}

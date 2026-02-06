@@ -19,6 +19,36 @@ export type JobColumn = {
     alwaysEditable?: boolean;
 };
 
+export const jobColumnsOperations: JobColumn[] = [
+    {
+        key: "status",
+        label: "Status",
+        minWidth: 120,
+        kind: "select",
+        alwaysEditable: true,
+        options: [
+            { label: "Created", value: "created" },
+            { label: "Allocated", value: "allocated" },
+            { label: "In Progress", value: "in_progress" },
+            { label: "Done", value: "done" },
+        ],
+    },
+
+    { key: "jobNumber", label: "Job", mono: true, minWidth: 90 },
+    { key: "date", label: "Date", minWidth: 110, getValue: (r) => formatNZDate(r.date) },
+    { key: "mechanic", label: "Technician", minWidth: 100 },
+    { key: "model", label: "Model", minWidth: 140 },
+    { key: "fleetNumber", label: "Fleet", mono: true, minWidth: 110 },
+    { key: "companyName", label: "Customer", minWidth: 180 },
+    { key: "description", label: "Description of the Job", minWidth: 280 },
+    {
+        key: "siteAddress",
+        label: "Address",
+        minWidth: 320,
+        getValue: (r) => [r.siteAddress, r.siteSuburb, r.siteCity].filter(Boolean).join(", "),
+    },
+];
+
 export const jobColumnsBasic: JobColumn[] = [
     {
         key: "status",

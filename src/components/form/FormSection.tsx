@@ -8,7 +8,7 @@ type FormSectionProps = {
 export function FormSection({ title, children }: FormSectionProps) {
     return (
         <section className={styles.section}>
-            <h3 className={styles.title}>{title}</h3>
+            <h2 className={styles.title}>{title}</h2>
 
             <div className={styles.content}>
                 {children}

@@ -1,12 +1,12 @@
 import React from "react";
-import type { JobEntryForm } from "../JobEntryPage";
+import type { JobEntryFormType } from "../JobEntryForm";
 import type { MachineRow, SiteContactRow } from "../../../../types/dataverse";
 import { createContact, getMachineByFleetNumber } from "../../../../lib/api";
 
 
 type Args = {
-    form: JobEntryForm;
-    setForm: React.Dispatch<React.SetStateAction<JobEntryForm>>;
+    form: JobEntryFormType;
+    setForm: React.Dispatch<React.SetStateAction<JobEntryFormType>>;
 };
 
 export function useMachineLookupAndContacts({ form, setForm }: Args) {

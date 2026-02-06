@@ -114,6 +114,7 @@ export default function JobListOpsBoard() {
                 onCopyToExcel={onCopyToExcel}
                 onEmailToTech={onEmailToTech}
                 onSaveDraft={onSaveDraft}
+                editable={false}
             />
             <JobTable
                 title="Allocated"

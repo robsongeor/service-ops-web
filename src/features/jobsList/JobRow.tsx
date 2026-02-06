@@ -29,11 +29,14 @@ export function JobRow({
     onCopyToExcel,
     onEmailToTech,
     onSaveDraft,
+
+    editable,
 }: {
     job: JobListItem;
     rowBg: string;
     columns: JobColumn[];
 
+    editable?: boolean;
     editingId: string | null;
     setEditingId: (id: string | null) => void;
 
@@ -46,9 +49,17 @@ export function JobRow({
     onCopyToExcel: (job: JobListItem) => void | Promise<void>;
     onEmailToTech?: (job: JobListItem) => void | Promise<void>;
     onSaveDraft?: (jobId: string, draft: Partial<JobListItem>) => void | Promise<void>;
+
+
 }) {
     const isEditingRow = editingId === job.id;
     const row = (isEditingRow ? (draft ?? job) : job) as JobListItem;
+
+    function emailToTech(job: JobListItem) {
+        console.log(job)
+    }
+
+    console.log(editable)
 
     return (
         <tr
@@ -86,8 +97,6 @@ export function JobRow({
                                 const fullRow = { ...job, status: v };
                                 onSaveDraft?.(job.id, fullRow);
                             }}
-
-
                         />
                     );
                 }
@@ -121,7 +130,7 @@ export function JobRow({
 
                     {!isEditingRow && (
                         <>
-                            <ActionButton
+                            {editable && <ActionButton
                                 title="Edit"
                                 icon={<Pencil size={14} />}
                                 bg="#eff6ff"
@@ -132,13 +141,13 @@ export function JobRow({
                                     setActiveCell(null);
                                 }}
                                 disabled={editingId !== null}
-                            />
+                            />}
                             <ActionButton
                                 title="Email to Technician"
                                 icon={<Mail size={14} />}
                                 bg="#fef3c7"
                                 hoverBg="#fde68a"
-                                onClick={() => onEmailToTech?.(job)}
+                                onClick={() => emailToTech(job)}
                             />
                         </>
                     )}

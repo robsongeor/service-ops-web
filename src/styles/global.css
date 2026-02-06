@@ -19,6 +19,8 @@
     --lh-tight: 1.2;
     --lh-normal: 1.35;
     --lh-relaxed: 1.4;
+
+    --input-gap: 1rem;
 }
 
 *,

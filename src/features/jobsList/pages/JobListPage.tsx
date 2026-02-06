@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { JobListItem, RawJob } from "../../../types/dataverse";
 import { mapRawJob } from "../mapJob";
-import { formatNZDate, nzDateToISO, toDataverseDateTime } from "../../../lib/utils/date";
+import { formatNZDate, toDataverseDateTime } from "../../../lib/utils/date";
 
 import { copyRowToClipboard } from "../../../lib/excel";
 
@@ -112,6 +112,7 @@ export default function JobListPage() {
 
                                 return (
                                     <JobRow
+                                        editable={true}
                                         columns={jobColumnsFull}
                                         key={j.id}
                                         job={j}
@@ -196,15 +197,4 @@ function Th({ children }: { children: React.ReactNode }) {
             {children}
         </th>
     );
-}
-
-
-
-
-
-
-
-function truncate(text: string, max: number) {
-    if (!text) return "";
-    return text.length > max ? text.slice(0, max - 1) + "…" : text;
 }
